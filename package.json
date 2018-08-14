@@ -1,0 +1,22 @@
+{
+  "name": "multi-quiz-training",
+  "private": true,
+  "scripts": {
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production",
+    "watch": "webpack --mode development --watch"
+  },
+  "devDependencies": {
+    "@types/react": "^16.4.6",
+    "@types/react-dom": "^16.0.6",
+    "awesome-typescript-loader": "^5.2.0",
+    "copy-webpack-plugin": "^4.5.2",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "styled-components": "^3.3.3",
+    "typescript": "^2.9.2",
+    "webpack": "^4.16.0",
+    "webpack-command": "^0.4.1"
+  },
+  "dependencies": {}
+}
