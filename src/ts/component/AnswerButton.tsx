@@ -8,7 +8,7 @@ const AnswerButtonDiv = styled.div`
     display: none;
     & + span {
       display: flex;
-      width: 20em;
+      align-items: center;
       height: 1.5em;
       margin: 2px;
       border: 3px outset grey;

@@ -1,10 +1,31 @@
 'use strict';
 
 import * as React from 'react';
+import styled from 'styled-components';
 
 import { AnswerButton } from 'component/AnswerButton';
 
 import { Quiz } from 'class/Quiz';
+
+const MainForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  max-width: 20em;
+`;
+
+const OKButton = styled.button`
+  align-self: center;
+  padding: 0.3em 0;
+  width: 40%;
+  border-radius: 5px;
+  font-size: 100%;
+  background-color: palegreen;
+`;
+
+const Commentary = styled.div`
+  align-self: center;
+  font-size: 300%;
+`;
 
 export interface QuizFormProps {
   quizzes: Quiz[];
@@ -92,22 +113,12 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
     );
 
     return (
-      <div>
-        <form onSubmit={this.handleOKClick}>
-          <div>
-            {this.currentQuiz.question}
-          </div>
-          <div>
-            {answerButtons}
-          </div>
-          <div>
-            <button type='submit'>OK</button>
-          </div>
-          <div>
-            {this.state.commentary}
-          </div>
-        </form>
-      </div>
+      <MainForm onSubmit={this.handleOKClick}>
+        <div>{this.currentQuiz.question}</div>
+        {answerButtons}
+        <OKButton type='submit'>OK</OKButton>
+        <Commentary>{this.state.commentary}</Commentary>
+      </MainForm>
     );
   };
 }
