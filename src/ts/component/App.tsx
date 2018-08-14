@@ -77,6 +77,32 @@ export class App extends React.Component<AppProps, AppState> {
               選択肢の順番をランダムにする
             </label>
           </div>
+          <div>
+            <h2>読み込める問題ファイルについて</h2>
+            <p>以下のような形式の JSON ファイル</p>
+            <pre><code>{`
+[
+  {
+    "question": "問題文１",
+    "answers": [
+      "答え１", "答え２", "答え３", "答え４"
+    ],
+    "dummies": [
+      "ダミー１", "ダミー２", "ダミー３"
+    ]
+  },
+  {
+    "question": "問題文２",
+    "answers": [
+      "答え１", "答え２"
+    ],
+    "dummies": [
+      "ダミー１"
+    ]
+  }
+]`}
+            </code></pre>
+          </div>
         </div>
       );
     }
