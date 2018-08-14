@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
-    "outDir": "./dist/",
+    "baseUrl": "./src/ts",
+    "outDir": "./dist",
     "strict": true,
     "module": "es6",
     "moduleResolution": "node",
@@ -13,6 +13,6 @@
     "jsx": "react"
   },
   "include": [
-    "./src/**/*"
+    "./src/ts/**/*"
   ]
 }
