@@ -54,11 +54,11 @@ extends React.Component<QuizFileLoaderProps, QuizFileLoaderState> {
         <form onSubmit={this.handleSubmit}>
           <div>
             <input
-              type='file' multiple required
+              type="file" multiple required
               onChange={this.handleFileSelect} />
           </div>
           <div>
-            <button type='submit'>作成</button>
+            <button type="submit">作成</button>
           </div>
           <div>
             <p>{this.state.notice}</p>

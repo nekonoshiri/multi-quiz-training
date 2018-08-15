@@ -39,15 +39,16 @@ export interface AnswerButtonProps {
   index: number;
   text: string;
   checked: boolean;
+  disabled: boolean;
   onChange: () => void;
 }
 
 export const AnswerButton = (props: AnswerButtonProps) => (
   <AnswerButtonDiv>
     <label>
-      <input type='checkbox'
+      <input type="checkbox"
         checked={props.checked}
-        onChange={props.onChange} />
+        onChange={props.disabled ? () => {} : props.onChange} />
       <span>
         <Badge>{props.index}</Badge>
         {props.text}

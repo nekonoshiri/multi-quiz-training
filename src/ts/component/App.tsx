@@ -60,8 +60,8 @@ export class App extends React.Component<AppProps, AppState> {
           <div>
             <label>
               <input
-                type='checkbox'
-                value='random_question'
+                type="checkbox"
+                value="random_question"
                 checked={this.state.random_question}
                 onChange={this.handleRandomQuestionCheck}/>
               出題順をランダムにする
@@ -70,8 +70,8 @@ export class App extends React.Component<AppProps, AppState> {
           <div>
             <label>
               <input
-                type='checkbox'
-                value='random_choices'
+                type="checkbox"
+                value="random_choices"
                 checked={this.state.random_choices}
                 onChange={this.handleRandomChoicesCheck}/>
               選択肢の順番をランダムにする
@@ -108,10 +108,7 @@ export class App extends React.Component<AppProps, AppState> {
     }
 
     return (
-      <div>
-        <h1>Multi Quiz Training</h1>
-        <QuizForm quizzes={this.state.quizzes}/>
-      </div>
+      <QuizForm quizzes={this.state.quizzes}/>
     );
   }
 }

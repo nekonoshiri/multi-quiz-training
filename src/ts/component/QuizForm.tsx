@@ -6,11 +6,24 @@ import styled from 'styled-components';
 import { AnswerButton } from 'component/AnswerButton';
 
 import { Quiz } from 'class/Quiz';
+import { toggled } from 'util/set';
 
 const MainForm = styled.form`
   display: flex;
   flex-direction: column;
   max-width: 20em;
+`;
+
+const Headline = styled.div`
+  align-self: center;
+`;
+
+const Question = styled.div`
+  border: thin solid black;
+  border-radius: 5px;
+  padding: 0.5em;
+  margin: 0.5em;
+  background-color: lightyellow;
 `;
 
 const OKButton = styled.button`
@@ -27,6 +40,17 @@ const Commentary = styled.div`
   font-size: 300%;
 `;
 
+const Footline = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  button {
+    font-size: 100%;
+    background-color: pink;
+    border-radius: 5px;
+  }
+`;
+
 export interface QuizFormProps {
   quizzes: Quiz[];
 }
@@ -35,7 +59,7 @@ export interface QuizFormState {
   index: number;
   selected: Set<number>;
   commentary: string;
-  disable: boolean;
+  disabled: boolean;
 }
 
 export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
@@ -45,7 +69,7 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
       index: 0,
       selected: new Set(),
       commentary: '',
-      disable: false
+      disabled: false
     };
   }
 
@@ -53,28 +77,45 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
     return this.props.quizzes[this.state.index];
   }
 
-  handleAnswerButtonClick(i: number) {
-    if (this.state.disable) return;
-
+  toPrevQuiz = () => {
     this.setState(prevState => {
-      const selected = new Set(prevState.selected);
-      if (selected.has(i)) {
-        selected.delete(i);
-      } else {
-        selected.add(i);
-      }
+      const prevIndex =
+        0 <= prevState.index - 1
+          ? prevState.index - 1 : this.props.quizzes.length - 1;
       return {
-        selected
+        index: prevIndex,
+        selected: new Set(),
+        commentary: '',
+        disabled: false
       };
     });
-  }
+  };
+
+  toNextQuiz = () => {
+    this.setState(prevState => {
+      const nextIndex =
+        prevState.index + 1 < this.props.quizzes.length
+          ? prevState.index + 1 : 0;
+      return {
+        index: nextIndex,
+        selected: new Set(),
+        commentary: '',
+        disabled: false
+      };
+    });
+  };
+
+  handleAnswerButtonClick(i: number) {
+    this.setState(prevState => ({
+      selected: toggled(prevState.selected, i)
+    }));
+  };
 
   handleOKClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (this.state.disable) return;
 
     const isCorrect = this.currentQuiz.answerTFs.every((tf, i) =>
-      tf == this.state.selected.has(i)
+      tf === this.state.selected.has(i)
     );
 
     this.setState({
@@ -83,24 +124,29 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
 
     if (isCorrect) {
       this.setState({
-        disable: true
+        disabled: true
       });
 
       setTimeout(() => {
-        this.setState(prevState => {
-          const nextIndex =
-            prevState.index + 1 < this.props.quizzes.length
-              ? prevState.index + 1 : 0;
-          return {
-            index: nextIndex,
-            selected: new Set(),
-            commentary: '',
-            disable: false
-          };
-        });
+        this.toNextQuiz();
       }, 2000);
     }
-  }
+  };
+
+  handleHintClick = () => {
+    const answerTFs = this.currentQuiz.answerTFs;
+    const selected = this.state.selected;
+
+    // find unselected answer
+    let ix = answerTFs.findIndex((tf, i) => tf && !selected.has(i));
+
+    if (ix < 0) {
+      // find selected dummy
+      ix = answerTFs.findIndex((tf, i) => !tf && selected.has(i));
+    }
+
+    if (0 <= ix) this.handleAnswerButtonClick(ix);
+  };
 
   render () {
     const answerButtons = this.currentQuiz.answerTexts.map((text, i) =>
@@ -109,15 +155,30 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
         key={text.toString()}
         text={text}
         checked={this.state.selected.has(i)}
+        disabled={this.state.disabled}
         onChange={this.handleAnswerButtonClick.bind(this, i)} />
+    );
+
+    const footline = (
+      <Footline>
+        <button type="button" onClick={this.toPrevQuiz}>←</button>
+        <button type="button" onClick={this.handleHintClick}>hint</button>
+        <button type="button" onClick={this.toNextQuiz}>→</button>
+      </Footline>
     );
 
     return (
       <MainForm onSubmit={this.handleOKClick}>
-        <div>{this.currentQuiz.question}</div>
+        <Headline>
+          {this.state.index + 1} / {this.props.quizzes.length}
+        </Headline>
+        <Question>
+          {this.currentQuiz.question}
+        </Question>
         {answerButtons}
-        <OKButton type='submit'>OK</OKButton>
+        <OKButton type="submit" disabled={this.state.disabled}>OK</OKButton>
         <Commentary>{this.state.commentary}</Commentary>
+        {this.state.disabled || footline}
       </MainForm>
     );
   };
