@@ -49,17 +49,28 @@ const Commentary = styled.div`
 `;
 
 const Footline = styled.div`
-  align-self: center;
+  display: flex;
+  justify-content: center;
   margin: 1em;
-  button {
-    font-size: 100%;
-    background-color: coral;
-    border-radius: 5px;
-  }
+`;
+
+const NextButton = styled.button`
+  padding: 0.3em 0;
+  width: 40%;
+  border-radius: 5px;
+  font-size: 100%;
+  background-color: pink;
+`;
+
+const HintButton = styled.button`
+  font-size: 100%;
+  background-color: coral;
+  border-radius: 5px;
 `;
 
 export interface QuizFormProps {
   quizzes: Quiz[];
+  waiting_seconds: number; // wait infinitely when (waiting_seconds < 0)
 }
 
 export interface QuizFormState {
@@ -134,9 +145,11 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
         waiting: true
       });
 
-      setTimeout(() => {
-        if (this.state.waiting) this.toNextQuiz();
-      }, 2000);
+      if (this.props.waiting_seconds >= 0) {
+        setTimeout(() => {
+          if (this.state.waiting) this.toNextQuiz();
+        }, this.props.waiting_seconds * 1000);
+      }
     }
   };
 
@@ -166,12 +179,6 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
         onChange={this.handleAnswerButtonClick.bind(this, i)} />
     );
 
-    const footline = (
-      <Footline>
-        <button type="button" onClick={this.handleHintClick}>hint</button>
-      </Footline>
-    );
-
     return (
       <MainForm onSubmit={this.handleOKClick}>
         <Headline>
@@ -185,7 +192,16 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
         {answerButtons}
         <OKButton type="submit" disabled={this.state.waiting}>OK</OKButton>
         <Commentary>{this.state.commentary}</Commentary>
-        {this.state.waiting || footline}
+        <Footline>
+          {this.state.waiting
+            ? <NextButton type="button" onClick={this.toNextQuiz}>
+                Next
+              </NextButton>
+            : <HintButton type="button" onClick={this.handleHintClick}>
+                Hint
+              </HintButton>
+          }
+        </Footline>
       </MainForm>
     );
   };
