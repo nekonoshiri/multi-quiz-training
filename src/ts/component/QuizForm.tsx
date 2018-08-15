@@ -15,7 +15,15 @@ const MainForm = styled.form`
 `;
 
 const Headline = styled.div`
-  align-self: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 1em;
+  button {
+    font-size: 130%;
+    background-color: pink;
+    border-radius: 5px;
+  }
 `;
 
 const Question = styled.div`
@@ -41,12 +49,11 @@ const Commentary = styled.div`
 `;
 
 const Footline = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 1em;
+  align-self: center;
+  margin: 1em;
   button {
     font-size: 100%;
-    background-color: pink;
+    background-color: coral;
     border-radius: 5px;
   }
 `;
@@ -59,7 +66,7 @@ export interface QuizFormState {
   index: number;
   selected: Set<number>;
   commentary: string;
-  disabled: boolean;
+  waiting: boolean;
 }
 
 export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
@@ -69,7 +76,7 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
       index: 0,
       selected: new Set(),
       commentary: '',
-      disabled: false
+      waiting: false
     };
   }
 
@@ -86,7 +93,7 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
         index: prevIndex,
         selected: new Set(),
         commentary: '',
-        disabled: false
+        waiting: false
       };
     });
   };
@@ -100,7 +107,7 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
         index: nextIndex,
         selected: new Set(),
         commentary: '',
-        disabled: false
+        waiting: false
       };
     });
   };
@@ -124,11 +131,11 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
 
     if (isCorrect) {
       this.setState({
-        disabled: true
+        waiting: true
       });
 
       setTimeout(() => {
-        this.toNextQuiz();
+        if (this.state.waiting) this.toNextQuiz();
       }, 2000);
     }
   };
@@ -155,30 +162,30 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
         key={text.toString()}
         text={text}
         checked={this.state.selected.has(i)}
-        disabled={this.state.disabled}
+        disabled={this.state.waiting}
         onChange={this.handleAnswerButtonClick.bind(this, i)} />
     );
 
     const footline = (
       <Footline>
-        <button type="button" onClick={this.toPrevQuiz}>←</button>
         <button type="button" onClick={this.handleHintClick}>hint</button>
-        <button type="button" onClick={this.toNextQuiz}>→</button>
       </Footline>
     );
 
     return (
       <MainForm onSubmit={this.handleOKClick}>
         <Headline>
-          {this.state.index + 1} / {this.props.quizzes.length}
+          <button type="button" onClick={this.toPrevQuiz}>←</button>
+          <span>{this.state.index + 1} / {this.props.quizzes.length}</span>
+          <button type="button" onClick={this.toNextQuiz}>→</button>
         </Headline>
         <Question>
           {this.currentQuiz.question}
         </Question>
         {answerButtons}
-        <OKButton type="submit" disabled={this.state.disabled}>OK</OKButton>
+        <OKButton type="submit" disabled={this.state.waiting}>OK</OKButton>
         <Commentary>{this.state.commentary}</Commentary>
-        {this.state.disabled || footline}
+        {this.state.waiting || footline}
       </MainForm>
     );
   };
