@@ -132,7 +132,7 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
   handleOKClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isCorrect = this.currentQuiz.answerTFs.every((tf, i) =>
+    const isCorrect = this.currentQuiz.optionTFs.every((tf, i) =>
       tf === this.state.selected.has(i)
     );
 
@@ -154,22 +154,22 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
   };
 
   handleHintClick = () => {
-    const answerTFs = this.currentQuiz.answerTFs;
+    const optionTFs = this.currentQuiz.optionTFs;
     const selected = this.state.selected;
 
     // find unselected answer
-    let ix = answerTFs.findIndex((tf, i) => tf && !selected.has(i));
+    let ix = optionTFs.findIndex((tf, i) => tf && !selected.has(i));
 
     if (ix < 0) {
       // find selected dummy
-      ix = answerTFs.findIndex((tf, i) => !tf && selected.has(i));
+      ix = optionTFs.findIndex((tf, i) => !tf && selected.has(i));
     }
 
     if (0 <= ix) this.handleAnswerButtonClick(ix);
   };
 
   render () {
-    const answerButtons = this.currentQuiz.answerTexts.map((text, i) =>
+    const answerButtons = this.currentQuiz.optionTexts.map((text, i) =>
       <AnswerButton
         index={i + 1}
         key={text.toString()}
