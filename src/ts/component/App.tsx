@@ -49,18 +49,24 @@ export class App extends React.Component<AppProps, AppState> {
   }
 
   chooseQuiz = (quiz: Quiz, max_num: number): Quiz => {
-    const randomInt = getRandomInt(
-      this.state.always_include_t_option ? 1 : 0, max_num, true
-    );
+    // when max_num is not specified or max_num <= 0
+    let t_num = Infinity;
+    let f_num = Infinity;
 
-    let t_num = Math.min(randomInt, quiz.t_options.length);
-    let f_num = max_num - t_num;
+    if (max_num > 0) {
+      const randomInt = getRandomInt(
+        this.state.always_include_t_option ? 1 : 0, max_num, true
+      );
 
-    const f_excess = f_num - quiz.f_options.length;
-    // when f_options are not enough
-    if (f_excess > 0) {
-      t_num = Math.min(t_num + f_excess, quiz.t_options.length);
-      f_num -= f_excess;
+      t_num = Math.min(randomInt, quiz.t_options.length);
+      f_num = max_num - t_num;
+
+      const f_excess = f_num - quiz.f_options.length;
+      // when f_options are not enough
+      if (f_excess > 0) {
+        t_num = Math.min(t_num + f_excess, quiz.t_options.length);
+        f_num -= f_excess;
+      }
     }
 
     if (this.state.random_options) {
@@ -74,20 +80,15 @@ export class App extends React.Component<AppProps, AppState> {
     }
   };
 
-  chooseQuizzes = (quizzes: Quiz[]): Quiz[] => {
-    const max_num = this.max_number_of_options;
-    return max_num > 0
-      ? quizzes.map(q => this.chooseQuiz(q, max_num))
-      : quizzes;
-  };
-
   shuffleQuizzes = (quizzes: Quiz[]): Quiz[] =>
     this.state.random_question ? shuffled(quizzes) : quizzes;
 
   handleCallback = (quizzes: Quiz[]) => {
+    const max_num = this.max_number_of_options;
     this.setState({
       page: 'QuizPage',
-      quizzes: this.shuffleQuizzes(this.chooseQuizzes(quizzes))
+      quizzes:
+        this.shuffleQuizzes(quizzes.map(q => this.chooseQuiz(q, max_num)))
     });
   };
 
