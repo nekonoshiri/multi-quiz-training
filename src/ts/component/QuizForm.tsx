@@ -172,7 +172,7 @@ export class QuizForm extends React.Component<QuizFormProps, QuizFormState> {
     const answerButtons = this.currentQuiz.optionTexts.map((text, i) =>
       <AnswerButton
         index={i + 1}
-        key={text.toString()}
+        key={i.toString()}
         text={text}
         checked={this.state.selected.has(i)}
         disabled={this.state.waiting}
