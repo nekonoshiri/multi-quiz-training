@@ -46,7 +46,7 @@ export const readQuizFile = (f: File): Promise<Quiz[]> =>
 
     const fileReader = new FileReader();
     fileReader.onload = e => {
-      if (e.target) {
+      if (e.target && typeof e.target.result == "string") {
         try {
           resolve(parseQuizFile(e.target.result));
         } catch(_) {
